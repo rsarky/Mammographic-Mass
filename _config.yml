@@ -14,6 +14,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: Digital Medicine Project 2019
+author: Rohit Sarkar
 email: rohitsarkar5398@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Classification of Mammographic masses as benign or malignant based on BI-RADS attributes
