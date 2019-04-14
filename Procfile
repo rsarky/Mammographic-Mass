@@ -1,1 +1,1 @@
-web: flask index.py
+web: flask run
