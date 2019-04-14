@@ -3,7 +3,15 @@ remoteurl = 'https://mammass.herokuapp.com/predict'
 let success = (data) => {
   console.log(data)
 }
-$().ready(() => {
+let $loading = $('#loading').hide();
+$()
+  .ajaxStart(function() {
+    $loading.show();
+  })
+  .ajaxStop(function() {
+    $loading.hide();
+  })
+  .ready(() => {
   console.log("Hello world")
   $("#malignant").hide()
   $("#benign").hide()
