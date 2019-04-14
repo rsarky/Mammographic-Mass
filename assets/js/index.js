@@ -1,4 +1,5 @@
-url = 'http://localhost:5000/predict'
+localurl = 'http://localhost:5000/predict'
+remoteurl = 'https://mammass.herokuapp.com/'
 let success = (data) => {
   console.log(data)
 }
@@ -20,7 +21,7 @@ $().ready(() => {
     console.log(features)
     $.ajax({
       type: "POST",
-      url: url,
+      url: remoteurl,
       data: JSON.stringify(data),
       contentType: 'application/json'
     })
