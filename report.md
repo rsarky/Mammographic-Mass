@@ -357,12 +357,12 @@ The dataset needs to be partitioned into training, testing and validation. The t
 
 Since the number of samples are limited (829) k-fold nested cross validation is chosen to be the method to chose an optimal model.
 
-<img src="/grid_search_cross_validation.png" alt="Drawing" style="width: 400px;"/>
+<img src="{{"/grid_search_cross_validation.png" | relative_url }}" alt="Drawing" style="width: 400px;" />
 
 ## Model Evaluation Metric
 
 Models can be evaluated using a number of metrics like accuracy, precision, recall etc.
-<img src="/precision_recall.png" alt="Drawing" style="width: 600px;"/>
+<img src="{{"/precision_recall.png" | relative_url }}" alt="Drawing" style="width: 600px;"/>
 
 Since we do not want to falsely classify a malignant tumour as benign at any rate, or in other words we want to minimise the number of false negatives we should `recall` as our Model Evaluation Metric.
 
