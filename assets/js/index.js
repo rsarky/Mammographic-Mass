@@ -1,5 +1,5 @@
 localurl = 'http://localhost:5000/predict'
-remoteurl = 'https://mammass.herokuapp.com/'
+remoteurl = 'https://mammass.herokuapp.com/predict'
 let success = (data) => {
   console.log(data)
 }
