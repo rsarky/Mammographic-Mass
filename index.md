@@ -4,7 +4,7 @@ title: Home
 ---
 
 ## Discrimination of benign and malignant mammographic masses based on BI-RADS attributes and the patient's age.
-This website demonstrates the project made my Rohit Sarkar for the course
+This website demonstrates the project made by Rohit Sarkar for the course
 Digital Medicine taught by Professor Raghupathi Cavale
 
 ### Contents : 
@@ -23,7 +23,7 @@ However the results of breast biopsies resulting from the Mammogram Interpretati
 The goal of this Project is to provide a Computer Aided Diagnosis (CAD) method that helps physicians in classifying
 Mammographic Masses with the help of [BI-RADS](https://radiopaedia.org/articles/breast-imaging-reporting-and-data-system-bi-rads)
 attributes and jthe Age of the patient. The machine learning model presented in this Project achieves a false positive rate of 
-***15%*** which is significantly better than the physicians performance.
+***15%*** using a Artificial Neural Network model which is significantly better than the physicians performance.
 
 ### Methodology
 The dataset used for learning is the [Mammographic Mass Dataset](http://archive.ics.uci.edu/ml/datasets/mammographic+mass) from the UCI Machine Learning Repository. 
@@ -36,10 +36,23 @@ The final model was deployed on a server running Python. A RESTful API was const
 For prediction the FrontEnd sends a request containing a list of features to the API Endpoint. The API then returns the 
 predictions back to the Frontend.
 
+### Code
+The code used to analyse the data and build the Neural Network model can be found in the [report]({{ "/report" | relative_url}})
+<br>
+The code used to make this website and the webserver running the model can be found [here](https://github.com/rsarky/Mammographic-Mass/)
+
 ### Conclusion and Future Goals
 It is clear that Computer Aided Diagnosis methods can significantly aid physicians in taking informed decisions. 
 Thus Digital Medicine is playing a crucial role in the field of Breast Cancer.
 In the future with more data, better models can be trained which will lead to higher accuracy.
+
+### Open Source Libraries USed
+- Scikit Learn:  Machine learning and Data analysis
+- Seaborn: Probabilistic graphs
+- Pandas: Data storage and manipulation
+- Numpy: Numerical computing
+- Matplotlib: Plotting
+- Flask: Microframework for web server
 
 ### Acknowledgements
 I would like to thank Professor Raghupathi Cavale and Professor Fayaz Shradgan for their guidance throughout the Digital Medicine Course.
