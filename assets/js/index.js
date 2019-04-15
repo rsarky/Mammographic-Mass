@@ -4,10 +4,10 @@ let success = (data) => {
   console.log(data)
 }
 let $loading = $('#loading').hide();
+$("#malignant").hide()
+$("#benign").hide()
 $().ready(() => {
   console.log("Hello world")
-  $("#malignant").hide()
-  $("#benign").hide()
   $( "#predict" ).submit(function( event ) {
     console.log("Form submitted")
     event.preventDefault();
