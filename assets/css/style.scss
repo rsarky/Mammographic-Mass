@@ -1,3 +1,42 @@
 ---
 ---
-@import "minima"
+@import "minima";
+
+form {
+  label {
+    display: inline-block;
+    width: 60px;
+  }
+}
+input, select {
+  margin: 4px;
+  padding: 3px;
+}
+
+select {
+  padding: 3px;
+}
+
+button {
+  padding: 3px;
+}
+
+#submit {
+  padding: 5px;
+  margin-top: 20px;
+  width: 100px;
+}
+
+#gcolor {
+  color: green;
+}
+
+#rcolor {
+  color: red;
+}
+
+#result {
+  p {
+    font-size: 1.3em;
+  }
+}

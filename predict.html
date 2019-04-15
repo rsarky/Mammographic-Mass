@@ -36,16 +36,16 @@ title: Predict
     <option value="3">Low</option>
     <option value="4">Fat Containing</option>
   </select><br>
-  <input type="submit" value="Submit">
+  <input id="submit" type="submit" value="Submit">
 </form>
 <br><br>
 <div id="loading">
 <img src="{{ "/ajax-loader.gif" | relative_url }}">
 </div>
-<div>
+<div id="result">
   <b>
-  <p id="malignant"> There is a <span id="percent2"></span>% chance that the tumour is malignant</p>
-  <p id="benign"> There is a <span id="percent1"></span>% chance that the tumour is benign</p>
+    <p id="malignant"> There is a <span id="percent2"></span>% chance that the tumour is <span id="rcolor">malignant</span></p>
+  <p id="benign"> There is a <span id="percent1"></span>% chance that the tumour is <span id="gcolor">benign</span></p>
   </b>
 </div>
 <p>An Artificial Neural Network Model is used to give these predictions. Checkout the code in the 
