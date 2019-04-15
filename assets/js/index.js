@@ -4,14 +4,7 @@ let success = (data) => {
   console.log(data)
 }
 let $loading = $('#loading').hide();
-$()
-  .ajaxStart(function() {
-    $loading.show();
-  })
-  .ajaxStop(function() {
-    $loading.hide();
-  })
-  .ready(() => {
+$().ready(() => {
   console.log("Hello world")
   $("#malignant").hide()
   $("#benign").hide()
@@ -27,6 +20,9 @@ $()
     features = [birads, age, shape, margin, density]
     data = { 'features': [features] }
     console.log(features)
+    $loading.show();
+    $("#malignant").hide()
+    $("#benign").hide()
     $.ajax({
       type: "POST",
       url: remoteurl,
@@ -34,6 +30,7 @@ $()
       contentType: 'application/json'
     })
       .done((data) => {
+        $loading.hide();
         parsed = JSON.parse(data)
         probs = parsed['probabilities']
         let benign = probs[0][0]*100
