@@ -7,6 +7,8 @@ title: Home
 This website demonstrates the project made by Rohit Sarkar for the course
 Digital Medicine taught by Professor Raghupathi Cavale
 
+### ***[Check if a tumour is malignant!!]({{ "/predict" | relative_url}})***
+
 ### **Site Map** : 
 - [Home]({{site.base_url}}) : Summary of the Project
 - [Predict]({{ "/predict" | relative_url}}) : Input the features and get predictions in real time!
