@@ -39,7 +39,7 @@ predictions back to the Frontend.
 ### **Code**
 The code used to analyse the data and build the Neural Network model can be found in the [report]({{ "/report" | relative_url}})
 <br>
-The code used to make this website and the webserver running the model can be found [here](https://github.com/rsarky/Mammographic-Mass/)
+The code used to make this website and the webserver running the Neural Network model can be found [here](https://github.com/rsarky/Mammographic-Mass/)
 
 ### **Conclusion and Future Goals**
 It is clear that Computer Aided Diagnosis methods can significantly aid physicians in taking informed decisions. 
