@@ -1,15 +1,22 @@
----
-layout: page
-title: Report
-permalink: /report/
----
+
+# Technical Report
+
+This document elaborately demonstrates the process of data analysis and learning carried out in order to train an
+optimal model.
+
+## Read the data
+The total number of data points in the dataset are 961.
+But there are missing values in the dataset and the rows corresponding to the missing values
+are removed. Thus the cleaned data has 830 rows.
+
 
 ```python
 import pandas as pd
 import numpy as np
 
 data = pd.read_csv('data.csv')
-
+print('Number of rows before removing missing values: %d' % data.shape[0])
+# Remove rows containing missing values.
 cleanData = data.replace('?', np.nan).dropna().reset_index(drop=True)
 cleanData = cleanData.astype('float64')
 
@@ -17,6 +24,9 @@ cleanData = cleanData.astype('float64')
 
 cleanData.describe()
 ```
+
+    Number of rows before removing missing values: 961
+
 
 
 
@@ -126,6 +136,9 @@ cleanData.describe()
 
 
 
+Observing the BIRADS column above we can see that the maximum value is displayed as 55. This must
+be incorrect as BIRADS values range from 0-5
+
 
 ```python
 # Drop row containing BIRADS value as 55 which doesnt make sense.
@@ -134,25 +147,6 @@ cleanData = cleanData.drop(toDrop).reset_index(drop=True)
 
 
 ```
-
-
-```python
-import matplotlib as plt
-import seaborn as sns
-sns.pairplot(cleanData, hue='Severity')
-
-```
-
-
-
-
-    <seaborn.axisgrid.PairGrid at 0x7f3cf7c3dbe0>
-
-
-
-
-![png](output_2_1.png)
-
 
 ## Handle Categorical Data
 
@@ -182,7 +176,7 @@ print(cleanData.head())
 
 
 From the data we can observe that all the categorical features have been transformed into ordinal features.
-For attribues such as shape and margin which are nominal ordering does not make sense. Thus we one hot encode these attributes.
+For attributes such as shape and margin which are nominal, ordering does not make sense. Thus we one hot encode these attributes.
 
 ### Using One Hot Encoding to Handle Categorical data
 
@@ -190,7 +184,7 @@ For attribues such as shape and margin which are nominal ordering does not make 
 ```python
 from sklearn.preprocessing import OneHotEncoder
 
-enc = OneHotEncoder(sparse=False)
+enc = OneHotEncoder(sparse=False,categories='auto')
 shapeFeatureArr = enc.fit_transform(cleanData[['Shape']])
 shapeFeatureLabels = ['round', 'oval', 'lobular', 'irregular']
 shapeFeature = pd.DataFrame(shapeFeatureArr, columns=shapeFeatureLabels)
@@ -207,16 +201,6 @@ dfOHE.head()
 ```
 
     Nominal features are one hot encoded and ordinal features are left as is.
-
-
-    /home/rohit/anaconda3/lib/python3.7/site-packages/sklearn/preprocessing/_encoders.py:368: FutureWarning: The handling of integer data will change in version 0.22. Currently, the categories are determined based on the range [0, max(values)], while in the future they will be determined based on the unique values.
-    If you want the future behaviour and silence this warning, you can specify "categories='auto'".
-    In case you used a LabelEncoder before this OneHotEncoder to convert the categories to integers, then you can now use the OneHotEncoder directly.
-      warnings.warn(msg, FutureWarning)
-    /home/rohit/anaconda3/lib/python3.7/site-packages/sklearn/preprocessing/_encoders.py:368: FutureWarning: The handling of integer data will change in version 0.22. Currently, the categories are determined based on the range [0, max(values)], while in the future they will be determined based on the unique values.
-    If you want the future behaviour and silence this warning, you can specify "categories='auto'".
-    In case you used a LabelEncoder before this OneHotEncoder to convert the categories to integers, then you can now use the OneHotEncoder directly.
-      warnings.warn(msg, FutureWarning)
 
 
 
@@ -342,9 +326,11 @@ dfOHE.head()
 
 
 
+From the above table we can observe that the `Shape` feature has been converted to 4 features namely 
+round, oval, lobular, irregular and the `Margin` feature has been converted to 5 features namely
+circumscribed, microlobulated, obscured, ill-defined and spiculated.
 
-
-## Data processing
+## Further Data processing
 
 ### Feature Normalisation
 We can observe that the range of the `Age` feature differs from the other categorical features by a large margin. So we normalise our data. After normalising all features are standard normal with mean 0 and unit variance. The features normalisation will be added to `sci-kit learn` pipeline. It is incorrect to normalise the entire data beforehand as we are using knowledge about the test set to normalise. Therefore information about the test set will leak into the model which is not acceptable.
@@ -357,14 +343,14 @@ The dataset needs to be partitioned into training, testing and validation. The t
 
 Since the number of samples are limited (829) k-fold nested cross validation is chosen to be the method to chose an optimal model.
 
-<img src="{{"/grid_search_cross_validation.png" | relative_url }}" alt="Drawing" style="width: 400px;" />
+<img src="grid_search_cross_validation.png" alt="Drawing" style="width: 400px;"/>
 
 ## Model Evaluation Metric
 
 Models can be evaluated using a number of metrics like accuracy, precision, recall etc.
-<img src="{{"/precision_recall.png" | relative_url }}" alt="Drawing" style="width: 600px;"/>
+<img src="precision_recall.png" alt="Drawing" style="width: 600px;"/>
 
-Since we do not want to falsely classify a malignant tumour as benign at any rate, or in other words we want to minimise the number of false negatives we should `recall` as our Model Evaluation Metric.
+Since we do not want to falsely classify a malignant tumour as benign at any rate, or in other words we want to minimise the number of false negatives we will consider `recall` as our Model Evaluation Metric.
 
 
 
@@ -412,20 +398,15 @@ gridLR.fit(X_train, y_train)
 print('Best parameters and Best Score')
 print(gridLR.best_params_, gridLR.best_score_)
 
+print('\n\nClassification Report:')
 print(classification_report(y_test, gridLR.predict(X_test)))
-# # Nested cross validation
-# results = cross_validate(grid, X, y, scoring=['recall', 'accuracy', 'precision'], cv=3)
-# results_ = []
-# for result in [results['test_accuracy'], results['test_precision'], results['test_recall']]:
-#     mean = result.mean()
-#     std = result.std()
-#     results_.append((mean, std))
-# for i,s in enumerate(['Accuracy', 'Precision', 'Recall']):
-#     print("%s : %0.3f (+/-%0.03f)" % (s, results_[i][0], results_[i][1] * 2))
 ```
 
     Best parameters and Best Score
     {'logisticregression__C': 0.01} 0.871079476709014
+    
+    
+    Classification Report:
                   precision    recall  f1-score   support
     
              0.0       0.82      0.76      0.79       134
@@ -448,21 +429,13 @@ params = {
     'mlpclassifier__alpha': [i**10 for i in range(-4,3)]
 }
 clf = make_pipeline(scaler, MLPClassifier(solver='lbfgs',random_state=0))
-gridNN = GridSearchCV(clf, parameter_space,scoring=metric,cv=3)
+gridNN = GridSearchCV(clf, parameter_space,scoring=metric,cv=3, iid=True)
 
 gridNN.fit(X_train, y_train)
 print('Best parameters and Best Score')
 print(gridNN.best_params_, gridNN.best_score_)
 
 print(classification_report(y_test, gridNN.predict(X_test)))
-# results = cross_validate(grid, X, y, scoring=['recall', 'accuracy', 'precision'], cv=3)
-# results_ = []
-# for result in [results['test_accuracy'], results['test_precision'], results['test_recall']]:
-#     mean = result.mean()
-#     std = result.std()
-#     results_.append((mean, std))
-# for i,s in enumerate(['Accuracy', 'Precision', 'Recall']):
-#     print("%s : %0.3f (+/-%0.03f)" % (s, results_[i][0], results_[i][1] * 2))
 ```
 
     Best parameters and Best Score
@@ -478,10 +451,6 @@ print(classification_report(y_test, gridNN.predict(X_test)))
     
 
 
-    /home/rohit/anaconda3/lib/python3.7/site-packages/sklearn/model_selection/_search.py:841: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
-      DeprecationWarning)
-
-
 ## Support Vector Machine
 
 
@@ -491,21 +460,12 @@ from sklearn.svm import SVC
 clf = make_pipeline(scaler, SVC())
 params = [{'svc__C':[10**i for i in range(-4,4)], 'svc__kernel':['linear', 'poly', 'rbf']}]
 
-gridSVM = GridSearchCV(clf, params, scoring=metric,cv=3)
+gridSVM = GridSearchCV(clf, params, scoring=metric,cv=3, iid=True)
 gridSVM.fit(X_train, y_train)
 print('Best parameters and best score')
 print(gridSVM.best_params_, gridSVM.best_score_)
 
 print(classification_report(y_test, gridSVM.predict(X_test)))
-# results = cross_validate(grid, X, y, scoring=['recall', 'accuracy', 'precision'], cv=3)
-# results_ = []
-# for result in [results['test_accuracy'], results['test_precision'], results['test_recall']]:
-#     mean = result.mean()
-#     std = result.std()
-#     results_.append((mean, std))
-# for i,s in enumerate(['Accuracy', 'Precision', 'Recall']):
-#     print("%s : %0.3f (+/-%0.03f)" % (s, results_[i][0], results_[i][1] * 2))
-
 ```
 
     Best parameters and best score
@@ -521,11 +481,28 @@ print(classification_report(y_test, gridSVM.predict(X_test)))
     
 
 
-    /home/rohit/anaconda3/lib/python3.7/site-packages/sklearn/model_selection/_search.py:841: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
-      DeprecationWarning)
+We will choose the **artificial neural network** as our model because it has higher recall than the other models. 
+It can also scale well with more data. ANNs are highly flexible and are a state of the art technique in Machine Learning
+
+## Evaluation of the Model
+We can see that our model has a false positive rate of just 23% which is much better than the false positive rate
+of physicians which is at 70%.
+Thus this model can effectively aid physicians in their diagnosis.
 
 
-We will choose the **neural network** as our model because it has higher recall than the other models.
+```python
+tn, fp, fn, tp = confusion_matrix(y_test, gridNN.predict(X_test)).ravel()
+
+print('False positive rate: %0.2f%%' % (fp*100 / (tp + fp)))
+```
+
+    False positive rate: 23.28%
+
+
+## Deploying the model
+We now train our model on the entire dataset.
+We then serialise it using the `pickle` library in Python and write it to a file.
+This file will be used by a server which is running the model.
 
 
 ```python
@@ -536,7 +513,17 @@ gridNN.fit(X,y)
 
 
 
-    0.8408890409232487
+    GridSearchCV(cv=3, error_score='raise-deprecating',
+           estimator=Pipeline(memory=None,
+         steps=[('standardscaler', StandardScaler(copy=True, with_mean=True, with_std=True)), ('mlpclassifier', MLPClassifier(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9,
+           beta_2=0.999, early_stopping=False, epsilon=1e-08,
+           hidden_layer_sizes=(100,), learning_rate='constant',
+     ...True, solver='lbfgs', tol=0.0001,
+           validation_fraction=0.1, verbose=False, warm_start=False))]),
+           fit_params=None, iid=True, n_jobs=None,
+           param_grid={'mlpclassifier__hidden_layer_sizes': [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (4, 1), (4, 2), (4, 3), (4, 4), (4... 5), (9, 6), (9, 7), (9, 8), (9, 9)], 'mlpclassifier__alpha': [1048576, 59049, 1024, 1, 0, 1, 1024]},
+           pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+           scoring='recall', verbose=0)
 
 
 
@@ -546,186 +533,3 @@ gridNN.fit(X,y)
 import pickle
 pickle.dump(gridNN, open("modelNN.pkl", "wb"))
 ```
-
-
-```python
-X.head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>BIRADS</th>
-      <th>Age</th>
-      <th>round</th>
-      <th>oval</th>
-      <th>lobular</th>
-      <th>irregular</th>
-      <th>circumscribed</th>
-      <th>microlobulated</th>
-      <th>obscured</th>
-      <th>ill-defined</th>
-      <th>spiculated</th>
-      <th>Density</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>5.0</td>
-      <td>67.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>3.0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>5.0</td>
-      <td>58.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>3.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>4.0</td>
-      <td>28.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>3.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>5.0</td>
-      <td>57.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>3.0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5.0</td>
-      <td>76.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>3.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-## 80% chance that if shape is 4 the cancer is malignant
-
-
-```python
-# sns.distplot(cleanData[['Shape']].loc[cleanData['Severity']==1])
-# sns.distplot(cleanData['Shape'], rug=True)
-# cleanData[['Shape']].plot()
-for i in range(1,5):
-    print(cleanData[['Shape']].loc[cleanData['Shape']==i].size)
-print(cleanData[['Shape']].loc[(cleanData['Shape']==i) & (cleanData['Severity']==1)].size/378)
-
-```
-
-    190
-    180
-    81
-    378
-    0.7857142857142857
-
-
-## No significant correlation observed between features.
-
-Only Shape and Margin appear to be correlated with coefficient 0.7
-
-
-```python
-sns.heatmap(cleanData.corr())
-```
-
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f3d077a9b70>
-
-
-
-
-![png](output_26_1.png)
-
-
-
-```python
-sns.distplot(cleanData['Age'])
-
-```
-
-    /home/rohit/anaconda3/lib/python3.7/site-packages/scipy/stats/stats.py:1713: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
-      return np.add.reduce(sorted[indexer] * weights, axis=axis) / sumval
-
-
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f3d04e4cd30>
-
-
-
-
-![png](output_27_2.png)
-
