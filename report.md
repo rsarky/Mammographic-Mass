@@ -148,6 +148,117 @@ cleanData = cleanData.drop(toDrop).reset_index(drop=True)
 
 ```
 
+# Data Visualisations
+
+
+```python
+df = pd.DataFrame()
+df['Age'] = cleanData['Age']
+df['Shape'] = cleanData['Shape'].astype('category').map({1.0:'round', 2.0: 'oval', 3.0:'lobular', 4.0:'irregular'})
+df['Margin'] = cleanData['Margin'].astype('category').map({ 1.0: 'circumscribed', 2.0: 'microlobulated', 3.0: 'obscured',4.0: 'ill-defined',5.0: 'spiculated'})
+df['BIRADS'] = cleanData['BIRADS'].astype('category')
+df['Density'] = cleanData['Density'].astype('category').map({1.0: 'high', 2.0: 'iso', 3.0: 'low', 4.0: 'fat-containing'})
+df['Severity'] = cleanData['Severity'].astype('category').map({1.0: 'malignant', 0.0: 'benign'})
+df.head()
+sns.countplot(x='Shape',hue='Severity',data=df)
+
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f3ce10ce320>
+
+
+
+
+![png](output_6_1.png)
+
+
+**Inference**: 
+- A large fraction of the `irregular` (80%) shaped tumours are malignant.
+- Most of the `round` and `oval` shaped tumours are benign.
+Thus the shape of the tumour is an important feature to be considered.
+
+
+```python
+sns.countplot(x='BIRADS',hue='Severity', data=df)
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f3ce0f72d30>
+
+
+
+
+![png](output_8_1.png)
+
+
+**Inference**
+- The BIRADS feature is highly skewed with most of the data points concentrated at 4 and 5.
+
+
+```python
+sns.countplot(x='Density', data=df)
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f3ce10c6240>
+
+
+
+
+![png](output_10_1.png)
+
+
+**Inference**:
+- Most of the density values in the data set are `low`
+
+
+```python
+sns.countplot(x='Margin', hue='Severity', data=df)
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f3ce0d7a208>
+
+
+
+
+![png](output_12_1.png)
+
+
+**Inference**:
+- Circumscribed masses are likely to be benign
+- Spiculated and ill-defined masses are likely to be malignant.
+
+
+```python
+sns.boxplot(x='Severity', y='Age', data=df)
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f3cde9ccda0>
+
+
+
+
+![png](output_14_1.png)
+
+
+**Inference**:
+- It can be clearly observed that older people are more likely to have a malignant mass
+
+# Machine Learning
+
 ## Handle Categorical Data
 
 ### Attribute Information
